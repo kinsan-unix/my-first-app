@@ -37,6 +37,9 @@ function reset() {
   player.vx = 0;
   player.vy = 0;
   player.onGround = true;
+  keys.left = false;
+  keys.right = false;
+  keys.jump = false;
   checkpointX = player.x;
   checkpointY = player.y;
   cameraX = 0;
@@ -158,7 +161,7 @@ function update(delta) {
 
   if (player.y > canvas.height + 100) {
     gameOver = true;
-    message.innerHTML = '<strong>GAME OVER</strong><span>落下してしまった！最後に着地した場所から再開できます</span><button class="resume-button" type="button">失敗した場所から再開</button>';
+    message.innerHTML = '<strong>GAME OVER</strong><span>再開方法を選んでください</span><button class="resume-button" type="button">失敗したところから再開</button><button class="restart-from-beginning-button" type="button">初めからスタート</button>';
     message.hidden = false;
     return;
   }
@@ -173,6 +176,7 @@ function update(delta) {
 
 message.addEventListener('click', (event) => {
   if (event.target.closest('.resume-button')) resumeFromCheckpoint();
+  if (event.target.closest('.restart-from-beginning-button')) reset();
 });
 
 function drawBackground() {
