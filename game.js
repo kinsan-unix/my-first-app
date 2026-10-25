@@ -49,7 +49,7 @@ function setKey(key, isDown) {
   if (key === 'ArrowRight' || key.toLowerCase() === 'd') keys.right = isDown;
   if (key === ' ' || key === 'ArrowUp' || key.toLowerCase() === 'w') {
     if (isDown && !keys.jump && player.onGround && !won && !gameOver) {
-      player.vy = -590;
+      player.vy = -650;
       player.onGround = false;
     }
     keys.jump = isDown;
