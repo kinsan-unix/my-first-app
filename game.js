@@ -22,6 +22,8 @@ const platforms = [
 
 const player = { x: 70, y: FLOOR_Y - 42, width: 28, height: 42, vx: 0, vy: 0, onGround: true };
 const keys = { left: false, right: false, jump: false };
+let checkpointX = player.x;
+let checkpointY = player.y;
 let cameraX = 0;
 let won = false;
 let gameOver = false;
@@ -35,11 +37,27 @@ function reset() {
   player.vx = 0;
   player.vy = 0;
   player.onGround = true;
+  checkpointX = player.x;
+  checkpointY = player.y;
   cameraX = 0;
   furthestX = player.x;
   score = 0;
   scoreDisplay.textContent = '000000';
   won = false;
+  gameOver = false;
+  message.hidden = true;
+}
+
+function resumeFromCheckpoint() {
+  player.x = checkpointX;
+  player.y = checkpointY;
+  player.vx = 0;
+  player.vy = 0;
+  player.onGround = true;
+  keys.left = false;
+  keys.right = false;
+  keys.jump = false;
+  cameraX = Math.max(0, Math.min(WORLD_WIDTH - canvas.width, player.x - canvas.width * 0.36));
   gameOver = false;
   message.hidden = true;
 }
@@ -58,7 +76,8 @@ function setKey(key, isDown) {
 
 window.addEventListener('keydown', (event) => {
   if (['ArrowLeft', 'ArrowRight', 'ArrowUp', ' '].includes(event.key)) event.preventDefault();
-  if (event.key === 'Enter' && (won || gameOver)) reset();
+  if (event.key === 'Enter' && gameOver) resumeFromCheckpoint();
+  else if (event.key === 'Enter' && won) reset();
   setKey(event.key, true);
 });
 
@@ -132,9 +151,14 @@ function update(delta) {
     }
   }
 
+  if (player.onGround) {
+    checkpointX = player.x;
+    checkpointY = player.y;
+  }
+
   if (player.y > canvas.height + 100) {
     gameOver = true;
-    message.innerHTML = '<strong>GAME OVER</strong><span>落下してしまった！もう一度挑戦しよう</span><button class="play-again-button" type="button">もう一度プレイ</button>';
+    message.innerHTML = '<strong>GAME OVER</strong><span>落下してしまった！最後に着地した場所から再開できます</span><button class="resume-button" type="button">失敗した場所から再開</button>';
     message.hidden = false;
     return;
   }
@@ -148,7 +172,7 @@ function update(delta) {
 }
 
 message.addEventListener('click', (event) => {
-  if (event.target.closest('.play-again-button')) reset();
+  if (event.target.closest('.resume-button')) resumeFromCheckpoint();
 });
 
 function drawBackground() {

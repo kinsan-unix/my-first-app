@@ -178,7 +178,7 @@ canvas {
 .game-message strong { color: var(--mint); font-size: clamp(24px, 5vw, 38px); }
 .game-message span { color: #e1e9ec; font-size: 14px; }
 
-.play-again-button {
+.resume-button {
   justify-self: center;
   margin-top: 8px;
   padding: 10px 18px;
@@ -191,7 +191,7 @@ canvas {
   box-shadow: 0 0 18px rgba(69, 225, 213, .16);
 }
 
-.play-again-button:hover {
+.resume-button:hover {
   background: rgba(48, 140, 145, .58);
 }
 
