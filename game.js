@@ -24,6 +24,7 @@ const player = { x: 70, y: FLOOR_Y - 42, width: 28, height: 42, vx: 0, vy: 0, on
 const keys = { left: false, right: false, jump: false };
 let cameraX = 0;
 let won = false;
+let gameOver = false;
 let lastTime = 0;
 let furthestX = player.x;
 let score = 0;
@@ -39,6 +40,7 @@ function reset() {
   score = 0;
   scoreDisplay.textContent = '000000';
   won = false;
+  gameOver = false;
   message.hidden = true;
 }
 
@@ -46,7 +48,7 @@ function setKey(key, isDown) {
   if (key === 'ArrowLeft' || key.toLowerCase() === 'a') keys.left = isDown;
   if (key === 'ArrowRight' || key.toLowerCase() === 'd') keys.right = isDown;
   if (key === ' ' || key === 'ArrowUp' || key.toLowerCase() === 'w') {
-    if (isDown && !keys.jump && player.onGround && !won) {
+    if (isDown && !keys.jump && player.onGround && !won && !gameOver) {
       player.vy = -590;
       player.onGround = false;
     }
@@ -56,7 +58,7 @@ function setKey(key, isDown) {
 
 window.addEventListener('keydown', (event) => {
   if (['ArrowLeft', 'ArrowRight', 'ArrowUp', ' '].includes(event.key)) event.preventDefault();
-  if (event.key === 'Enter' && won) reset();
+  if (event.key === 'Enter' && (won || gameOver)) reset();
   setKey(event.key, true);
 });
 
@@ -86,7 +88,7 @@ document.querySelectorAll('[data-control]').forEach((button) => {
 });
 
 function update(delta) {
-  if (won) return;
+  if (won || gameOver) return;
   const step = Math.min(delta, 1 / 30);
   const direction = Number(keys.right) - Number(keys.left);
   player.vx = direction * 250;
@@ -130,7 +132,12 @@ function update(delta) {
     }
   }
 
-  if (player.y > canvas.height + 100) reset();
+  if (player.y > canvas.height + 100) {
+    gameOver = true;
+    message.innerHTML = '<strong>GAME OVER</strong><span>落下してしまった！もう一度挑戦しよう</span><button class="play-again-button" type="button">もう一度プレイ</button>';
+    message.hidden = false;
+    return;
+  }
   cameraX = Math.max(0, Math.min(WORLD_WIDTH - canvas.width, player.x - canvas.width * 0.36));
 
   if (player.x + player.width >= WORLD_WIDTH - 95) {
@@ -139,6 +146,10 @@ function update(delta) {
     message.hidden = false;
   }
 }
+
+message.addEventListener('click', (event) => {
+  if (event.target.closest('.play-again-button')) reset();
+});
 
 function drawBackground() {
   const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
