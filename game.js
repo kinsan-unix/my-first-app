@@ -271,24 +271,24 @@ function drawWorld() {
     const screenX = platform.x - cameraX;
     if (screenX + platform.width < -5 || screenX > canvas.width + 5) continue;
     const surface = ctx.createLinearGradient(0, platform.y, 0, canvas.height);
-    surface.addColorStop(0, '#202d4b');
-    surface.addColorStop(1, '#11182e');
+    surface.addColorStop(0, '#493448');
+    surface.addColorStop(1, '#241d32');
     ctx.fillStyle = surface;
     ctx.fillRect(screenX, platform.y, platform.width, canvas.height - platform.y);
     ctx.save();
-    ctx.shadowColor = '#55f5df';
+    ctx.shadowColor = '#ffc86b';
     ctx.shadowBlur = 12;
-    ctx.fillStyle = '#62f3df';
+    ctx.fillStyle = '#ffd166';
     ctx.fillRect(screenX, platform.y, platform.width, 3);
     ctx.restore();
-    ctx.fillStyle = 'rgba(122, 245, 228, .52)';
+    ctx.fillStyle = 'rgba(255, 221, 143, .62)';
     ctx.fillRect(screenX, platform.y + 3, platform.width, 2);
-    ctx.fillStyle = 'rgba(96, 123, 174, .24)';
+    ctx.fillStyle = 'rgba(206, 151, 121, .3)';
     for (let x = screenX + 18; x < screenX + platform.width - 8; x += 42) {
       ctx.fillRect(x, platform.y + 19, 18, 2);
-      ctx.fillStyle = 'rgba(91, 219, 215, .35)';
+      ctx.fillStyle = 'rgba(255, 190, 113, .4)';
       ctx.fillRect(x + 4, platform.y + 29, 4, 4);
-      ctx.fillStyle = 'rgba(96, 123, 174, .24)';
+      ctx.fillStyle = 'rgba(206, 151, 121, .3)';
     }
   }
 
