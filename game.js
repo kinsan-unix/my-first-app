@@ -117,61 +117,118 @@ function update(delta) {
 
 function drawBackground() {
   const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
-  sky.addColorStop(0, '#8bc9d3');
-  sky.addColorStop(1, '#d1e7c3');
+  sky.addColorStop(0, '#10152d');
+  sky.addColorStop(0.58, '#29234b');
+  sky.addColorStop(1, '#61415c');
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.fillStyle = 'rgba(250, 250, 225, .7)';
+  const glow = ctx.createRadialGradient(740 - cameraX * 0.05, 150, 8, 740 - cameraX * 0.05, 150, 330);
+  glow.addColorStop(0, 'rgba(255, 130, 166, .2)');
+  glow.addColorStop(1, 'rgba(255, 130, 166, 0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = 'rgba(255, 225, 232, .9)';
   ctx.beginPath();
-  ctx.arc(770 - cameraX * 0.08, 95, 37, 0, Math.PI * 2);
+  ctx.arc(740 - cameraX * 0.05, 150, 30, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255, 225, 232, .12)';
+  ctx.beginPath();
+  ctx.arc(740 - cameraX * 0.05, 150, 43, 0, Math.PI * 2);
   ctx.fill();
 
-  drawHills('#9ac9ad', 330, 0.18, 120);
-  drawHills('#80b899', 385, 0.32, 90);
+  drawStars();
+  drawRidge('#242443', 340, 52, 0.12, 0);
+  drawRidge('#1a203d', 390, 36, 0.22, 73);
+  drawCity();
 
-  ctx.fillStyle = 'rgba(255,255,255,.62)';
-  for (let i = 0; i < 5; i++) {
-    const x = ((i * 240 - cameraX * 0.16 + 1300) % 1300 + 1300) % 1300 - 100;
-    const y = 95 + (i % 3) * 54;
-    drawCloud(x, y);
+  const groundGlow = ctx.createLinearGradient(0, 390, 0, 470);
+  groundGlow.addColorStop(0, 'rgba(56, 235, 221, 0)');
+  groundGlow.addColorStop(1, 'rgba(56, 235, 221, .12)');
+  ctx.fillStyle = groundGlow;
+  ctx.fillRect(0, 390, canvas.width, 80);
+}
+
+function drawStars() {
+  for (let i = 0; i < 72; i++) {
+    const worldX = (i * 137 + 29) % 1450;
+    const x = ((worldX - cameraX * 0.035 + 1450) % 1450) * (canvas.width / 1450);
+    const y = 20 + ((i * 83 + 17) % 245);
+    const radius = i % 9 === 0 ? 1.8 : 0.9;
+    ctx.fillStyle = i % 7 === 0 ? 'rgba(113, 247, 232, .9)' : 'rgba(230, 236, 255, .7)';
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
-function drawHills(color, base, speed, size) {
+function drawRidge(color, base, height, speed, phase) {
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.moveTo(0, canvas.height);
-  for (let x = -size; x <= canvas.width + size; x += size) {
-    const offset = -((cameraX * speed) % (size * 2));
-    ctx.lineTo(x + offset, base - (x % (size * 2) === 0 ? 48 : 0));
-    ctx.lineTo(x + size + offset, base);
+  const segment = 155;
+  const offset = -((cameraX * speed + phase) % segment);
+  for (let x = -segment; x <= canvas.width + segment; x += segment) {
+    const peak = base - ((Math.floor((x + phase) / segment) % 2 === 0) ? height : height * 0.55);
+    ctx.lineTo(x + offset, peak);
+    ctx.lineTo(x + segment * 0.48 + offset, base + 12);
   }
-  ctx.lineTo(canvas.width, canvas.height);
+  ctx.lineTo(canvas.width + segment, canvas.height);
   ctx.closePath();
   ctx.fill();
 }
 
-function drawCloud(x, y) {
-  ctx.beginPath();
-  ctx.ellipse(x, y, 31, 10, 0, 0, Math.PI * 2);
-  ctx.ellipse(x - 13, y - 6, 14, 12, 0, 0, Math.PI * 2);
-  ctx.ellipse(x + 3, y - 10, 17, 16, 0, 0, Math.PI * 2);
-  ctx.ellipse(x + 19, y - 3, 13, 11, 0, 0, Math.PI * 2);
-  ctx.fill();
+function drawCity() {
+  const buildingWidth = 54;
+  const offset = -((cameraX * 0.3) % buildingWidth);
+  for (let i = -1; i < 21; i++) {
+    const x = i * buildingWidth + offset;
+    const height = 24 + ((i * 37 + 180) % 65);
+    const y = 405 - height;
+    ctx.fillStyle = i % 3 === 0 ? '#1d2545' : '#202541';
+    ctx.fillRect(x, y, buildingWidth - 5, height);
+    ctx.fillStyle = 'rgba(105, 128, 187, .24)';
+    ctx.fillRect(x + 6, y + 8, 2, height - 12);
+    for (let row = 0; row < Math.floor((height - 12) / 15); row++) {
+      ctx.fillStyle = (i + row) % 4 === 0 ? 'rgba(255, 164, 190, .72)' : 'rgba(99, 218, 222, .48)';
+      ctx.fillRect(x + 14, y + 9 + row * 15, 5, 5);
+      if ((i + row) % 3 !== 0) ctx.fillRect(x + 31, y + 9 + row * 15, 5, 5);
+    }
+  }
+
+  ctx.fillStyle = 'rgba(80, 218, 221, .45)';
+  ctx.fillRect(0, 404, canvas.width, 1);
+  const horizonGlow = ctx.createLinearGradient(0, 397, 0, 425);
+  horizonGlow.addColorStop(0, 'rgba(80, 218, 221, .12)');
+  horizonGlow.addColorStop(1, 'rgba(80, 218, 221, 0)');
+  ctx.fillStyle = horizonGlow;
+  ctx.fillRect(0, 397, canvas.width, 28);
 }
 
 function drawWorld() {
   for (const platform of platforms) {
     const screenX = platform.x - cameraX;
     if (screenX + platform.width < -5 || screenX > canvas.width + 5) continue;
-    ctx.fillStyle = '#5c9870';
+    const surface = ctx.createLinearGradient(0, platform.y, 0, canvas.height);
+    surface.addColorStop(0, '#202d4b');
+    surface.addColorStop(1, '#11182e');
+    ctx.fillStyle = surface;
     ctx.fillRect(screenX, platform.y, platform.width, canvas.height - platform.y);
-    ctx.fillStyle = '#80c477';
-    ctx.fillRect(screenX, platform.y, platform.width, 9);
-    ctx.fillStyle = 'rgba(39, 91, 65, .2)';
-    for (let x = screenX + 18; x < screenX + platform.width; x += 42) {
-      ctx.fillRect(x, platform.y + 28, 12, 5);
+    ctx.save();
+    ctx.shadowColor = '#55f5df';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = '#62f3df';
+    ctx.fillRect(screenX, platform.y, platform.width, 3);
+    ctx.restore();
+    ctx.fillStyle = 'rgba(122, 245, 228, .52)';
+    ctx.fillRect(screenX, platform.y + 3, platform.width, 2);
+    ctx.fillStyle = 'rgba(96, 123, 174, .24)';
+    for (let x = screenX + 18; x < screenX + platform.width - 8; x += 42) {
+      ctx.fillRect(x, platform.y + 19, 18, 2);
+      ctx.fillStyle = 'rgba(91, 219, 215, .35)';
+      ctx.fillRect(x + 4, platform.y + 29, 4, 4);
+      ctx.fillStyle = 'rgba(96, 123, 174, .24)';
     }
   }
 
@@ -180,16 +237,20 @@ function drawWorld() {
 }
 
 function drawGoal(x) {
-  ctx.fillStyle = '#f8f3dc';
-  ctx.fillRect(x, FLOOR_Y - 105, 5, 105);
-  ctx.fillStyle = '#f07868';
+  ctx.save();
+  ctx.shadowColor = '#64f8e2';
+  ctx.shadowBlur = 22;
+  ctx.fillStyle = '#8bfff0';
+  ctx.fillRect(x, FLOOR_Y - 108, 4, 108);
+  ctx.fillStyle = '#70f5df';
   ctx.beginPath();
-  ctx.moveTo(x + 5, FLOOR_Y - 104);
-  ctx.lineTo(x + 48, FLOOR_Y - 90);
-  ctx.lineTo(x + 5, FLOOR_Y - 75);
+  ctx.moveTo(x + 4, FLOOR_Y - 104);
+  ctx.lineTo(x + 47, FLOOR_Y - 91);
+  ctx.lineTo(x + 4, FLOOR_Y - 78);
   ctx.closePath();
   ctx.fill();
-  ctx.fillStyle = '#f8f3dc';
+  ctx.restore();
+  ctx.fillStyle = '#d9fff6';
   ctx.beginPath();
   ctx.ellipse(x + 2, FLOOR_Y, 14, 4, 0, 0, Math.PI * 2);
   ctx.fill();
@@ -198,21 +259,65 @@ function drawGoal(x) {
 function drawPlayer() {
   const x = player.x - cameraX;
   const y = player.y;
-  ctx.fillStyle = 'rgba(28, 58, 59, .18)';
+
+  ctx.fillStyle = 'rgba(4, 9, 25, .42)';
   ctx.beginPath();
-  ctx.ellipse(x + player.width / 2, y + player.height + 5, 17, 5, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + player.width / 2, y + player.height + 5, 16, 4, 0, 0, Math.PI * 2);
   ctx.fill();
-  ctx.fillStyle = '#f4a879';
-  ctx.fillRect(x + 3, y + 5, 22, 23);
-  ctx.fillStyle = '#ed876f';
-  ctx.fillRect(x + 1, y + 11, 26, 10);
-  ctx.fillStyle = '#36485a';
-  ctx.fillRect(x + 4, y + 28, 8, 12);
-  ctx.fillRect(x + 17, y + 28, 8, 12);
-  ctx.fillStyle = '#fff9e7';
-  ctx.fillRect(x + 17, y + 12, 5, 6);
-  ctx.fillStyle = '#344451';
-  ctx.fillRect(x + 20, y + 14, 2, 4);
+
+  ctx.save();
+  ctx.shadowColor = '#54f3e5';
+  ctx.shadowBlur = 14;
+  ctx.fillStyle = '#ff668f';
+  ctx.beginPath();
+  ctx.moveTo(x + 6, y + 19);
+  ctx.lineTo(x - 3, y + 34);
+  ctx.lineTo(x + 9, y + 31);
+  ctx.lineTo(x + 13, y + 23);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = '#121a35';
+  ctx.fillRect(x + 4, y + 29, 8, 11);
+  ctx.fillRect(x + 17, y + 29, 8, 11);
+  ctx.fillStyle = '#66e9df';
+  ctx.fillRect(x + 3, y + 38, 10, 3);
+  ctx.fillRect(x + 16, y + 38, 10, 3);
+
+  const armor = ctx.createLinearGradient(x, y + 15, x + player.width, y + 29);
+  armor.addColorStop(0, '#9c6af5');
+  armor.addColorStop(0.55, '#4a68c3');
+  armor.addColorStop(1, '#27365e');
+  ctx.fillStyle = armor;
+  ctx.beginPath();
+  ctx.moveTo(x + 6, y + 16);
+  ctx.lineTo(x + 22, y + 16);
+  ctx.lineTo(x + 26, y + 29);
+  ctx.lineTo(x + 3, y + 29);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#74fff0';
+  ctx.fillRect(x + 7, y + 22, 14, 2);
+  ctx.fillStyle = '#e7c7ff';
+  ctx.fillRect(x + 5, y + 29, 19, 2);
+
+  ctx.fillStyle = '#263253';
+  ctx.beginPath();
+  ctx.roundRect(x + 4, y + 3, 21, 17, 6);
+  ctx.fill();
+  ctx.fillStyle = '#edb7ab';
+  ctx.fillRect(x + 7, y + 1, 15, 5);
+  ctx.fillStyle = '#9d70ef';
+  ctx.fillRect(x + 4, y + 7, 21, 4);
+  ctx.save();
+  ctx.shadowColor = '#62fff0';
+  ctx.shadowBlur = 8;
+  ctx.fillStyle = '#7bfff2';
+  ctx.fillRect(x + 13, y + 12, 9, 4);
+  ctx.restore();
+  ctx.fillStyle = '#f4f0ff';
+  ctx.fillRect(x + 19, y + 12, 2, 2);
 }
 
 function render() {

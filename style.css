@@ -60,10 +60,10 @@ button { font: inherit; }
 
 .game-card {
   overflow: hidden;
-  border: 1px solid rgba(188, 207, 224, .12);
+  border: 1px solid rgba(133, 151, 224, .2);
   border-radius: 14px;
-  background: #172437;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, .23);
+  background: linear-gradient(145deg, #1a2038, #151d31 65%);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, .3), 0 0 36px rgba(96, 85, 196, .08);
 }
 
 .game-topline { min-height: 100px; padding: 20px 28px; }
@@ -98,15 +98,25 @@ h1 {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--mint);
-  box-shadow: 0 0 12px rgba(168, 240, 204, .6);
+  background: #6af5df;
+  box-shadow: 0 0 12px rgba(106, 245, 223, .7);
 }
 
 .canvas-wrap {
   position: relative;
   overflow: hidden;
-  background: #9bd7d3;
+  background: #10152d;
   line-height: 0;
+}
+
+.canvas-wrap::after {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center, transparent 48%, rgba(10, 13, 31, .32) 100%),
+    linear-gradient(180deg, rgba(10, 13, 31, .12), transparent 20%, transparent 85%, rgba(10, 13, 31, .18));
+  content: "";
+  pointer-events: none;
 }
 
 canvas {
@@ -119,10 +129,11 @@ canvas {
 .game-message {
   position: absolute;
   inset: 0;
+  z-index: 1;
   display: grid;
   place-content: center;
   gap: 8px;
-  background: rgba(12, 25, 39, .54);
+  background: rgba(12, 15, 38, .58);
   color: #fff;
   text-align: center;
   line-height: 1.5;
