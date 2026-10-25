@@ -1,11 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101a2a">
+  <title>SKYBOUND - 横スクロールアクション</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="game.js" defer></script>
 </head>
 <body>
-    ようこそ私のページへ！！
+  <main class="game-shell">
+    <header class="game-header">
+      <a class="wordmark" href="#" aria-label="SKYBOUND ホーム">SKY<span>BOUND</span></a>
+      <p class="header-note">小さな冒険のはじまり</p>
+    </header>
+
+    <section class="game-card" aria-label="横スクロールアクションゲーム">
+      <div class="game-topline">
+        <div>
+          <p class="eyebrow">WORLD 01 <span>・</span> はじまりの草原</p>
+          <h1>空の向こうへ。</h1>
+        </div>
+        <p class="objective"><span class="objective-dot"></span> ゴールの旗を目指そう</p>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="game" width="960" height="540" aria-label="ゲーム画面"></canvas>
+        <div class="game-message" id="game-message" role="status" aria-live="polite" hidden></div>
+      </div>
+
+      <div class="game-footer">
+        <p class="instructions"><kbd>←</kbd><kbd>→</kbd> 移動 <span class="instruction-gap"></span><kbd>Space</kbd> ジャンプ</p>
+        <button class="restart-button" id="restart" type="button">↻ <span>最初から</span></button>
+      </div>
+
+      <div class="touch-controls" aria-label="タッチ操作">
+        <div class="touch-direction">
+          <button class="touch-button" data-control="left" type="button" aria-label="左へ移動">←</button>
+          <button class="touch-button" data-control="right" type="button" aria-label="右へ移動">→</button>
+        </div>
+        <button class="touch-button jump-button" data-control="jump" type="button" aria-label="ジャンプ">JUMP <span>↑</span></button>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>TAKE IT EASY, KEEP GOING.</span>
+      <span>ひとつずつ、前へ。</span>
+    </footer>
+  </main>
 </body>
 </html>
