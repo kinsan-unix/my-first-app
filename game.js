@@ -84,7 +84,20 @@ function update(delta) {
   const step = Math.min(delta, 1 / 30);
   const direction = Number(keys.right) - Number(keys.left);
   player.vx = direction * 250;
-  player.x += player.vx * step;
+  const nextX = player.x + player.vx * step;
+  player.x = nextX;
+
+  if (direction !== 0) {
+    for (const platform of platforms) {
+      const overlapsVertically = player.y < canvas.height && player.y + player.height > platform.y;
+      const overlapsHorizontally = player.x + player.width > platform.x && player.x < platform.x + platform.width;
+      if (!overlapsVertically || !overlapsHorizontally) continue;
+
+      if (direction > 0) player.x = Math.min(player.x, platform.x - player.width);
+      else player.x = Math.max(player.x, platform.x + platform.width);
+    }
+  }
+
   player.x = Math.max(0, Math.min(WORLD_WIDTH - player.width, player.x));
 
   const previousBottom = player.y + player.height;
