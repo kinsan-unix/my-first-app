@@ -109,6 +109,39 @@ h1 {
   line-height: 0;
 }
 
+.score-display {
+  position: absolute;
+  z-index: 1;
+  top: 16px;
+  right: 18px;
+  display: grid;
+  min-width: 116px;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid rgba(106, 245, 223, .34);
+  border-radius: 7px;
+  background: rgba(15, 21, 46, .78);
+  box-shadow: 0 0 18px rgba(69, 225, 213, .12), inset 0 0 14px rgba(69, 225, 213, .05);
+  line-height: 1.2;
+  backdrop-filter: blur(5px);
+}
+
+.score-display span {
+  color: #83e9dc;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .18em;
+}
+
+.score-display strong {
+  color: #f5f5ff;
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-shadow: 0 0 10px rgba(112, 255, 235, .5);
+}
+
 .canvas-wrap::after {
   position: absolute;
   inset: 0;
@@ -129,7 +162,7 @@ canvas {
 .game-message {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   place-content: center;
   gap: 8px;
@@ -203,6 +236,8 @@ kbd:nth-of-type(3) { min-width: 48px; }
   .objective { gap: 6px; font-size: 10px; }
   .eyebrow { font-size: 9px; }
   .game-footer { min-height: 53px; padding: 8px 12px; }
+  .score-display { top: 10px; right: 10px; min-width: 96px; padding: 6px 9px; }
+  .score-display strong { font-size: 15px; }
   .instructions { font-size: 10px; gap: 5px; }
   .instruction-gap { width: 3px; }
   .restart-button { padding: 6px 7px; }

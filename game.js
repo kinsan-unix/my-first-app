@@ -1,6 +1,7 @@
 const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
 const message = document.querySelector('#game-message');
+const scoreDisplay = document.querySelector('#score');
 const WORLD_WIDTH = 3200;
 const FLOOR_Y = 450;
 
@@ -24,6 +25,8 @@ const keys = { left: false, right: false, jump: false };
 let cameraX = 0;
 let won = false;
 let lastTime = 0;
+let furthestX = player.x;
+let score = 0;
 
 function reset() {
   player.x = 70;
@@ -32,6 +35,9 @@ function reset() {
   player.vy = 0;
   player.onGround = true;
   cameraX = 0;
+  furthestX = player.x;
+  score = 0;
+  scoreDisplay.textContent = '000000';
   won = false;
   message.hidden = true;
 }
@@ -99,6 +105,12 @@ function update(delta) {
   }
 
   player.x = Math.max(0, Math.min(WORLD_WIDTH - player.width, player.x));
+  furthestX = Math.max(furthestX, player.x);
+  const nextScore = Math.floor((furthestX - 70) / 10);
+  if (nextScore !== score) {
+    score = nextScore;
+    scoreDisplay.textContent = String(score).padStart(6, '0');
+  }
 
   const previousBottom = player.y + player.height;
   player.vy += 1550 * step;
